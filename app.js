@@ -5,18 +5,24 @@ require("./configs/db")
 const usersRouter = require("./routes/users")
 const usersModel = require("./models/users")
 //using middelware in folders
-const testMiddelWare = require("./midelware/test")
-
+const testMiddelWare = require("./middlewares/test")
+const path = require("path")
 const morgan = require("morgan")
-
-
+//for web xss vulrabality
+const helmet = require("helmet")
+// for handeling cors error
+const cors = require("cors")
 // for clearing middelWare handlers
 const omitEmpty = require("omit-empty")
+const corseRouter = require("./routes/courses")
+
+
+// Clearing Empty Values 
 console.log(omitEmpty({
     firstname: "",
     lastename: "",
     phone: "03124122",
-    email:
+    email: "na1kel@gmail.com"
 }))
 
 
@@ -26,30 +32,63 @@ const camelcaseKeys = (...args) => import(camelcaseKeys).then(({ default: camelc
 // const registerValidator = require("./validators/resgister")
 
 
+app.use(express.static(path.join(__dirname, "public")))
+
 
 //Json The Requests body
 app.use(express.json())
-
 // Pare The Request Body
 app.use(express.urlencoded())
-
-
+app.use(helmet())
+// for handeling cors error
+app.use(cors())
 // WE USE THIS PACKAGE TO SHOW LOGS AND WHAT REQUESTS WE SEND TO WHAT URL
 app.use(morgan('dev'))
+
+
+
+// Realations In Node.js
+app.get("/", async (req, res) => {
+    // await teacherModel.create({
+    //     fullname: "babak hasani"
+    // })
+
+    // await courseModel.create({
+    //     title:"tailwind",
+    //     teacher:"67a7b7b2512272516a275442"
+    // })
+    
+    return res.json({ message: "200 Response" })
+
+    // Sending HTML Files
+    // res.sendFile(path.join(__dirname, "views", "index.html"))
+})
+
 
 
 
 // USING EXPRESS ROUTES/mytest/:testing
 app.use("/api/users/", usersRouter)
 app.use("/api/books/", bookRouter)
+app.use('/api/courses',corseRouter)
 
 
 //HOW USING MIDELWARE 
 app.get("/mytest/:testing", testMiddelWare.middleWare, async (req, res) => {
 
+
     res.json({ message: "midleware End", para: req.params.testing, })
 })
 
+
+
+
+// 404 Error (Not Found Handler)
+
+app.use((req, res, next) => {
+
+    return res.status(404).json({ message: "Page Not Found" })
+})
 
 // app.post("/api/users", async (req, res) => {
 
