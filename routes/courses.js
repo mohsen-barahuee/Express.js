@@ -4,7 +4,8 @@ const coursesController = require("./../controller/courses")
 const coursesRouter = express.Router()
 
 
-coursesRouter.get("/",coursesController.getAll)
+coursesRouter.route("/").get(coursesController.getAll)
+coursesRouter.route("/comments").post(coursesController.setComment)
 
 
 

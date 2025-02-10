@@ -3,7 +3,6 @@ const app = express()
 const bookRouter = require("./routes/books")
 require("./configs/db")
 const usersRouter = require("./routes/users")
-const usersModel = require("./models/users")
 //using middelware in folders
 const testMiddelWare = require("./middlewares/test")
 const path = require("path")
@@ -15,6 +14,8 @@ const cors = require("cors")
 // for clearing middelWare handlers
 const omitEmpty = require("omit-empty")
 const corseRouter = require("./routes/courses")
+const courseModel = require("./models/course")
+const { teacherModel } = require("./models/teacher")
 
 
 // Clearing Empty Values 
@@ -49,16 +50,31 @@ app.use(morgan('dev'))
 
 // Realations In Node.js
 app.get("/", async (req, res) => {
+
     // await teacherModel.create({
     //     fullname: "babak hasani"
     // })
 
+
+    // Embedded Model Send Data
+    // const teacher = await teacherModel.findOne({_id:"67a7b7c7792cdec685af9599"})
+
     // await courseModel.create({
-    //     title:"tailwind",
-    //     teacher:"67a7b7b2512272516a275442"
+    //     title:"Network +",
+    //     teacher:teacher
     // })
-    
-    return res.json({ message: "200 Response" })
+
+
+    await courseModel.findOneAndUpdate({ _id: "67a7b8006360d52b57af1824" },
+        {
+            $set: { comments: [] }
+        }
+    )
+
+
+
+    // return res.json({ message: teacher })
+    return res.json({ message: "Comments Added!!" })
 
     // Sending HTML Files
     // res.sendFile(path.join(__dirname, "views", "index.html"))
@@ -70,7 +86,7 @@ app.get("/", async (req, res) => {
 // USING EXPRESS ROUTES/mytest/:testing
 app.use("/api/users/", usersRouter)
 app.use("/api/books/", bookRouter)
-app.use('/api/courses',corseRouter)
+app.use('/api/courses', corseRouter)
 
 
 //HOW USING MIDELWARE 
