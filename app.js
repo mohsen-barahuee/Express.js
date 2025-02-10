@@ -16,7 +16,8 @@ const omitEmpty = require("omit-empty")
 const corseRouter = require("./routes/courses")
 const courseModel = require("./models/course")
 const { teacherModel } = require("./models/teacher")
-
+// fileUploader
+const uploader = require("./middlewares/multer")
 
 // Clearing Empty Values 
 console.log(omitEmpty({
@@ -25,6 +26,7 @@ console.log(omitEmpty({
     phone: "03124122",
     email: "na1kel@gmail.com"
 }))
+
 
 
 const camelcaseKeys = (...args) => import(camelcaseKeys).then(({ default: camelcase }) => camelcase(args))
@@ -49,12 +51,18 @@ app.use(morgan('dev'))
 
 
 // Realations In Node.js
+app.post('/',
+    // uploader.single("profile") //single file uploads
+    uploader.array("profile", 3) // multi file upload
+    , async (req, res) => {
+        console.log(req.file)
+        res.json(req.files)
+    })
 app.get("/", async (req, res) => {
 
     // await teacherModel.create({
     //     fullname: "babak hasani"
     // })
-
 
     // Embedded Model Send Data
     // const teacher = await teacherModel.findOne({_id:"67a7b7c7792cdec685af9599"})
@@ -73,8 +81,8 @@ app.get("/", async (req, res) => {
 
 
 
-    // return res.json({ message: teacher })
-    return res.json({ message: "Comments Added!!" })
+    return res.json({ message: teacher })
+    // return res.json({ message: "Comments Added!!" })
 
     // Sending HTML Files
     // res.sendFile(path.join(__dirname, "views", "index.html"))
