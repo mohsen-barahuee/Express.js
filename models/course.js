@@ -15,7 +15,34 @@ const commentModel = require("./comment")
 //     }
 
 // })
-const courseModel = mongoose.model("Course", {
+
+
+
+
+// const courseModel = mongoose.model("Course", {
+//     title: {
+//         type: String,
+//         require: true
+//     },
+//     teacher: {
+//         type: teachersSchema
+
+//     },
+
+//     // comments: [
+//     //     {
+//     //         type: mongoose.Types.ObjectId,
+//     //         ref: "Comment"
+//     //     },
+//     // ]
+
+// })
+
+
+
+
+// Making Virtual Relation
+const coursesSchema = mongoose.Schema({
     title: {
         type: String,
         require: true
@@ -24,14 +51,18 @@ const courseModel = mongoose.model("Course", {
         type: teachersSchema
 
     },
-    comments: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: "Comment"
-        },
-    ]
+
+
+})
+coursesSchema.virtual("comments", {
+
+    ref: "Comment",
+    localField: "_id",
+    foreignField: "course"
 
 })
 
+const coursesModel = mongoose.model("Course", coursesSchema)
 
-module.exports = courseModel
+
+module.exports = coursesModel
